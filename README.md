@@ -47,8 +47,8 @@ Para implementar esta solución, necesitarás:
 
 1. Clona este repositorio:
    ```bash
-   git clone https://github.com/gabanox/serverless-api-products.git
-   cd serverless-api-products
+   git clone https://github.com/gabanox/serverless-aws-products-api.git
+   cd serverless-aws-products-api
    ```
 
 2. Instala las dependencias:
