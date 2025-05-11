@@ -1,0 +1,29 @@
+{
+  "name": "serverless-api-products",
+  "version": "1.0.0",
+  "description": "API Serverless con AWS API Gateway, Lambda y DynamoDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "deploy": "sam build && sam deploy",
+    "start-local": "sam local start-api"
+  },
+  "keywords": [
+    "aws",
+    "serverless",
+    "api",
+    "lambda",
+    "dynamodb",
+    "apigateway"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1037.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "jest": "^27.4.5",
+    "aws-sam-local": "^0.2.11"
+  }
+}
