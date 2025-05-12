@@ -8,6 +8,18 @@ samconfig.toml
 .env
 .env.*
 
+# AWS SAM
+.aws-sam/
+packaged.yaml
+packaged-template.yaml
+.sam/
+
+# AWS y CloudFormation
+cloudformation-template-update-stack.json
+template-export.yml
+template-configuration.json
+*-parameter-overrides.json
+
 # Logs
 *.log
 npm-debug.log*
@@ -22,14 +34,36 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+# Archivos grandes
+*.zip
+
 # Testing
 coverage/
 .nyc_output/
+test-results/
+jest-cache/
 
 # Build output
 dist/
 build/
 tmp/
+.dynamodb/
+
+# AWS Lambda
+lambda-deploy/*.zip
+aws/dist/
+
+# Directorios específicos del proyecto
+sam-installation/
+aws/
 
 # Otros
 .serverless/
+**/.claude/settings.local.json
+CLAUDE.md
+
+# Configuraciones locales
+local-env.json
+config.local.js
+*-local.yaml
+local-*
