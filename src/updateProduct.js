@@ -7,9 +7,23 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 exports.handler = async (event) => {
     // Log para depuración
     console.log('Evento recibido:', JSON.stringify(event));
-    
+
+    // Manejar solicitudes preflight OPTIONS para CORS
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'PUT,OPTIONS'
+            },
+            body: JSON.stringify({})
+        };
+    }
+
     // Obtener el ID del producto de los parámetros de ruta
-    const productId = event.pathParameters.id;
+    const productId = event.pathParameters && event.pathParameters.id;
     
     if (!productId) {
         return {

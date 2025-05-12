@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
 
 // Configuración explícita de región
 AWS.config.update({ region: 'us-east-1' });
@@ -18,7 +19,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient({
 exports.handler = async (event) => {
     // Log para depuración
     console.log('Evento recibido:', JSON.stringify(event));
-    
+
     // Manejar solicitudes preflight OPTIONS para CORS
     if (event.httpMethod === 'OPTIONS') {
         return {
@@ -32,10 +33,10 @@ exports.handler = async (event) => {
             body: JSON.stringify({})
         };
     }
-    
+
     try {
         console.log('Iniciando procesamiento de solicitud');
-        
+
         // Verificar que el cuerpo existe
         if (!event.body) {
             console.error('Error: Body vacío o nulo');
@@ -45,14 +46,14 @@ exports.handler = async (event) => {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                body: JSON.stringify({ 
-                    message: 'El cuerpo de la solicitud está vacío' 
+                body: JSON.stringify({
+                    message: 'El cuerpo de la solicitud está vacío'
                 })
             };
         }
-        
+
         console.log('Cuerpo de la solicitud:', event.body);
-        
+
         // Parsear el cuerpo de la solicitud
         const requestBody = JSON.parse(event.body);
         
@@ -70,11 +71,8 @@ exports.handler = async (event) => {
             };
         }
 
-        // Generar un ID único usando timestamp y un valor aleatorio
-        // en lugar de depender del módulo 'uuid'
-        const timestamp = new Date().getTime().toString();
-        const randomPart = Math.random().toString(36).substring(2, 15);
-        const productId = requestBody.id || `${timestamp}-${randomPart}`;
+        // Generar un ID único si no se proporciona
+        const productId = requestBody.id || uuidv4();
         
         // Crear objeto del producto
         const product = {
@@ -133,14 +131,14 @@ exports.handler = async (event) => {
         // Otros errores
         console.error('Tipo de error:', error.constructor.name);
         console.error('Stack trace:', error.stack);
-        
+
         return {
             statusCode: 500,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 message: 'Error al crear el producto',
                 errorType: error.constructor.name,
                 errorDetail: error.message

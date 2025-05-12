@@ -1,4 +1,6 @@
 const AWS = require('aws-sdk');
+// No usar uuid ya que no está disponible en el entorno de ejecución
+// const { v4: uuidv4 } = require('uuid');
 
 // Configuración explícita de región
 AWS.config.update({ region: 'us-east-1' });
