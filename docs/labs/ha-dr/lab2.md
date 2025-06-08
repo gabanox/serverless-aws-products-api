@@ -21,7 +21,7 @@ In this lab, you will implement auto scaling to ensure TechModa's API can smooth
 
 ## Architecture
 
-![Auto Scaling Architecture](/assets/images/auto-scaling-architecture.png)
+![Auto Scaling Architecture](../../assets/images/auto-scaling-architecture.png)
 
 The architecture will include:
 - Lambda functions with reserved concurrency

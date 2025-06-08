@@ -20,7 +20,7 @@ In this lab, you will help TechModa ensure that their product catalog API can co
 
 ## Architecture
 
-![Multi-AZ Architecture](/assets/images/multi-az-architecture.png)
+![Multi-AZ Architecture](../../assets/images/multi-az-architecture.png)
 
 The architecture will include:
 - API Gateway (inherently multi-AZ)

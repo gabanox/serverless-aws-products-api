@@ -24,7 +24,7 @@ The CTO has mandated implementing a disaster recovery solution with:
 
 ## Architecture
 
-![Disaster Recovery Architecture](/assets/images/dr-architecture.png)
+![Disaster Recovery Architecture](../../assets/images/dr-architecture.png)
 
 The architecture will include:
 - Primary region deployment (e.g., us-east-1)

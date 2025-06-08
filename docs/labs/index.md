@@ -16,7 +16,7 @@ This track focuses on building resilient systems that can withstand failures and
 
 4. **[Monitoring with CloudWatch](ha-dr/lab4.md)** - Set up comprehensive monitoring, alerting, and automated responses to infrastructure events.
 
-5. **[Implementing Backup Solutions](ha-dr/lab5.md)** - Create automated backup policies and test recovery procedures for critical data.
+5. **[Proyecto Capstone: Solución Integral de Alta Disponibilidad](ha-dr/proyecto-capstone.md)** - Implementar una solución completa que integre todos los conceptos anteriores.
 
 ## TechModa Business Context
 

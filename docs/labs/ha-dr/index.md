@@ -36,6 +36,6 @@ Through this series of labs, you will implement solutions to meet TechModa's req
 
 4. **[Monitoring with CloudWatch](lab4.md)** - Set up comprehensive monitoring, alerting, and automated incident response.
 
-5. **[Implementing Backup Solutions](lab5.md)** - Create automated backup strategies and validate recovery procedures.
+5. **[Proyecto Capstone: Solución Integral de Alta Disponibilidad](proyecto-capstone.md)** - Implementar una solución completa que integre todos los conceptos anteriores.
 
 Let's begin with [Lab 1: Setting up Multi-AZ Architecture](lab1.md).

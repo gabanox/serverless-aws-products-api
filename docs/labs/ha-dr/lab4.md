@@ -26,7 +26,7 @@ The CTO wants to implement proactive monitoring that can:
 
 ## Architecture
 
-![Monitoring Architecture](/assets/images/monitoring-architecture.png)
+![Monitoring Architecture](../../assets/images/monitoring-architecture.png)
 
 The architecture will include:
 - CloudWatch metrics and alarms
