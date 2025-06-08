@@ -23,6 +23,8 @@ En este laboratorio, implementarás auto escalado para garantizar que la API de 
 
 ![Arquitectura de Auto Escalado](../../assets/images/auto-scaling-architecture.png)
 
+*Ilustración del escalado de concurrencia de Lambda y escalado de capacidad de DynamoDB gestionado por CloudWatch*
+
 La arquitectura incluirá:
 - Funciones Lambda con concurrencia reservada
 - DynamoDB con políticas de auto escalado

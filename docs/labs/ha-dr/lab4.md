@@ -28,6 +28,8 @@ El CTO quiere implementar monitorización proactiva que pueda:
 
 ![Arquitectura de Monitorización](../../assets/images/monitoring-architecture.png)
 
+*Mostrando la configuración completa de monitorización con paneles de CloudWatch, alarmas, eventos y respuestas automatizadas*
+
 La arquitectura incluirá:
 - Métricas y alarmas de CloudWatch
 - Panel de control personalizado de CloudWatch

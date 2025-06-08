@@ -22,6 +22,8 @@ En este laboratorio, ayudarás a TechModa a garantizar que su API de catálogo d
 
 ![Arquitectura Multi-AZ](../../assets/images/multi-az-architecture.png)
 
+*API Gateway distribuyendo tráfico a funciones Lambda en dos zonas de disponibilidad con DynamoDB*
+
 La arquitectura incluirá:
 - API Gateway (inherentemente multi-AZ)
 - Funciones Lambda (distribuidas automáticamente entre AZs)

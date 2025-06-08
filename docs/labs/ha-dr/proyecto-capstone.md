@@ -29,7 +29,9 @@ El CTO ha solicitado una solución integral que combine todos los aspectos de al
 
 ## Arquitectura
 
-![Arquitectura de Solución Integral](../../assets/images/backup-architecture.png)
+![Arquitectura de Solución Integral](../../assets/images/multi-az-architecture.png)
+
+*Arquitectura completa que integra Multi-AZ, Auto Escalado, Recuperación ante Desastres y Monitorización*
 
 La arquitectura incluirá:
 - Implementación Multi-AZ con DynamoDB configurado para alta disponibilidad

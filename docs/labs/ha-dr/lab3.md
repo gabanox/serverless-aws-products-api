@@ -26,6 +26,8 @@ El CTO ha ordenado implementar una solución de recuperación ante desastres con
 
 ![Arquitectura de Recuperación ante Desastres](../../assets/images/dr-architecture.png)
 
+*Mostrando las regiones primaria y secundaria con conmutación por error DNS de Route 53 y replicación de DynamoDB*
+
 La arquitectura incluirá:
 - Despliegue en región primaria (ej., us-east-1)
 - Despliegue en región secundaria (ej., us-west-2)
