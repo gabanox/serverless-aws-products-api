@@ -1,44 +1,44 @@
-# Lab 2: Implementing Auto Scaling
+# Laboratorio 2: Implementación de Auto Escalado
 
-## Overview
+## Descripción General
 
-In this lab, you will configure auto scaling for TechModa's serverless product API to handle variable traffic patterns. You'll learn how to optimize the performance and cost-efficiency of Lambda functions and DynamoDB while ensuring the system can handle traffic spikes during promotional events.
+En este laboratorio, configurarás el auto escalado para la API serverless de productos de TechModa para manejar patrones de tráfico variables. Aprenderás cómo optimizar el rendimiento y la eficiencia de costos de las funciones Lambda y DynamoDB, asegurando que el sistema pueda manejar picos de tráfico durante eventos promocionales.
 
-**Duration**: Approximately 75 minutes
+**Duración**: Aproximadamente 75 minutos
 
-**Objectives**:
-- Configure Lambda concurrency settings
-- Set up DynamoDB on-demand capacity
-- Implement DynamoDB auto scaling with provisioned capacity
-- Test the auto scaling behavior under load
-- Monitor and analyze scaling metrics
+**Objetivos**:
+- Configurar ajustes de concurrencia para Lambda
+- Configurar capacidad bajo demanda para DynamoDB
+- Implementar auto escalado de DynamoDB con capacidad aprovisionada
+- Probar el comportamiento de auto escalado bajo carga
+- Monitorear y analizar métricas de escalado
 
-## Business Context
+## Contexto Empresarial
 
-TechModa regularly runs flash sales and participates in fashion events that can cause traffic to spike by 500-1000% within minutes. During a recent promotional event, their product API experienced throttling and high latency due to Lambda concurrency limits and DynamoDB throughput constraints.
+TechModa regularmente realiza ventas flash y participa en eventos de moda que pueden hacer que el tráfico aumente de 500-1000% en cuestión de minutos. Durante un evento promocional reciente, su API de productos experimentó limitaciones y alta latencia debido a los límites de concurrencia de Lambda y restricciones de rendimiento de DynamoDB.
 
-In this lab, you will implement auto scaling to ensure TechModa's API can smoothly handle these traffic patterns without service degradation.
+En este laboratorio, implementarás auto escalado para garantizar que la API de TechModa pueda manejar suavemente estos patrones de tráfico sin degradación del servicio.
 
-## Architecture
+## Arquitectura
 
-![Auto Scaling Architecture](../../assets/images/auto-scaling-architecture.png)
+![Arquitectura de Auto Escalado](../../assets/images/auto-scaling-architecture.png)
 
-The architecture will include:
-- Lambda functions with reserved concurrency
-- DynamoDB with auto scaling policies
-- CloudWatch alarms for monitoring scaling events
+La arquitectura incluirá:
+- Funciones Lambda con concurrencia reservada
+- DynamoDB con políticas de auto escalado
+- Alarmas de CloudWatch para monitorear eventos de escalado
 
-## Step 1: Configure Lambda Concurrency
+## Paso 1: Configurar Concurrencia de Lambda
 
-Begin by setting appropriate concurrency settings for your Lambda functions:
+Comienza configurando ajustes de concurrencia apropiados para tus funciones Lambda:
 
-1. Review the current Lambda concurrency configuration:
+1. Revisa la configuración actual de concurrencia de Lambda:
 
 ```bash
-aws lambda get-function-concurrency --function-name <function-name>
+aws lambda get-function-concurrency --function-name <nombre-de-función>
 ```
 
-2. Update the `template.yaml` file to configure reserved concurrency for critical functions:
+2. Actualiza el archivo `template.yaml` para configurar concurrencia reservada para funciones críticas:
 
 ```yaml
 Resources:
@@ -47,7 +47,7 @@ Resources:
     Properties:
       Handler: src/getProducts.handler
       Runtime: nodejs14.x
-      ReservedConcurrentExecutions: 100  # Reserve 100 concurrent executions
+      ReservedConcurrentExecutions: 100  # Reserva 100 ejecuciones concurrentes
       Events:
         GetProducts:
           Type: Api
@@ -56,7 +56,7 @@ Resources:
             Method: get
 ```
 
-3. For other functions, set provisioned concurrency to ensure fast response times:
+3. Para otras funciones, configura concurrencia aprovisionada para asegurar tiempos de respuesta rápidos:
 
 ```yaml
 Resources:
@@ -75,11 +75,11 @@ Resources:
             Method: post
 ```
 
-## Step 2: Configure DynamoDB Auto Scaling
+## Paso 2: Configurar Auto Escalado de DynamoDB
 
-Next, set up DynamoDB to automatically scale based on demand:
+A continuación, configura DynamoDB para escalar automáticamente basado en la demanda:
 
-1. Update the `template.yaml` file to configure DynamoDB with provisioned capacity and auto scaling:
+1. Actualiza el archivo `template.yaml` para configurar DynamoDB con capacidad aprovisionada y auto escalado:
 
 ```yaml
 Resources:
@@ -121,7 +121,7 @@ Resources:
       ServiceNamespace: dynamodb
       RoleARN: !GetAtt ScalingRole.Arn
       
-  # Similar configuration for Write Capacity
+  # Configuración similar para la capacidad de escritura
   
   ScalingRole:
     Type: AWS::IAM::Role
@@ -137,7 +137,7 @@ Resources:
         - "arn:aws:iam::aws:policy/service-role/AmazonDynamoDBFullAccess"
 ```
 
-2. Alternatively, for simplicity, you can use on-demand capacity mode:
+2. Alternativamente, para mayor simplicidad, puedes usar el modo de capacidad bajo demanda:
 
 ```yaml
 Resources:
@@ -156,18 +156,18 @@ Resources:
         PointInTimeRecoveryEnabled: true
 ```
 
-3. Deploy the updated configuration:
+3. Despliega la configuración actualizada:
 
 ```bash
 sam build
 sam deploy
 ```
 
-## Step 3: Create CloudWatch Alarms for Scaling Events
+## Paso 3: Crear Alarmas de CloudWatch para Eventos de Escalado
 
-Set up CloudWatch alarms to monitor scaling events:
+Configura alarmas de CloudWatch para monitorear eventos de escalado:
 
-1. Add the following CloudWatch alarm to your `template.yaml`:
+1. Añade la siguiente alarma de CloudWatch a tu archivo `template.yaml`:
 
 ```yaml
 Resources:
@@ -175,7 +175,7 @@ Resources:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: !Sub ${AWS::StackName}-DynamoDBThrottleEvents
-      AlarmDescription: Alarm when DynamoDB requests are throttled
+      AlarmDescription: Alarma cuando las solicitudes de DynamoDB son limitadas
       MetricName: ReadThrottleEvents
       Namespace: AWS/DynamoDB
       Statistic: Sum
@@ -188,78 +188,78 @@ Resources:
           Value: !Ref ProductsTable
 ```
 
-## Step 4: Test Auto Scaling Behavior
+## Paso 4: Probar el Comportamiento de Auto Escalado
 
-Now let's test how the system responds to increased load:
+Ahora vamos a probar cómo responde el sistema a un aumento de carga:
 
-1. Create a load testing script that simulates traffic spikes:
+1. Crea un script de prueba de carga que simule picos de tráfico:
 
 ```bash
 #!/bin/bash
-API_URL="<your-api-url>"
+API_URL="<url-de-tu-api>"
 
-# Function to make requests in parallel
-make_requests() {
-  local parallel_requests=$1
+# Función para hacer solicitudes en paralelo
+hacer_solicitudes() {
+  local solicitudes_paralelas=$1
   
-  for i in $(seq 1 $parallel_requests); do
+  for i in $(seq 1 $solicitudes_paralelas); do
     curl -s "$API_URL/products" > /dev/null &
   done
   wait
 }
 
-# Start with low traffic
-echo "Starting with low traffic (5 RPS)..."
+# Comenzar con tráfico bajo
+echo "Comenzando con tráfico bajo (5 RPS)..."
 for i in $(seq 1 30); do
-  make_requests 5
+  hacer_solicitudes 5
   sleep 1
 done
 
-# Medium traffic
-echo "Increasing to medium traffic (20 RPS)..."
+# Tráfico medio
+echo "Aumentando a tráfico medio (20 RPS)..."
 for i in $(seq 1 30); do
-  make_requests 20
+  hacer_solicitudes 20
   sleep 1
 done
 
-# High traffic spike
-echo "Simulating traffic spike (100 RPS)..."
+# Pico de tráfico alto
+echo "Simulando pico de tráfico (100 RPS)..."
 for i in $(seq 1 60); do
-  make_requests 100
+  hacer_solicitudes 100
   sleep 1
 done
 
-# Cool down
-echo "Returning to normal traffic..."
+# Enfriamiento
+echo "Volviendo a tráfico normal..."
 for i in $(seq 1 30); do
-  make_requests 5
+  hacer_solicitudes 5
   sleep 1
 done
 ```
 
-2. Run the load testing script and monitor the following in the AWS Console:
-   - DynamoDB metrics in CloudWatch
-   - Lambda concurrency
-   - API Gateway requests and latency
-   - Any throttling events
+2. Ejecuta el script de prueba de carga y monitorea lo siguiente en la Consola de AWS:
+   - Métricas de DynamoDB en CloudWatch
+   - Concurrencia de Lambda
+   - Solicitudes y latencia de API Gateway
+   - Cualquier evento de limitación
 
-## Step 5: Analyze and Optimize
+## Paso 5: Analizar y Optimizar
 
-Based on the test results, optimize your auto scaling configuration:
+Basado en los resultados de las pruebas, optimiza tu configuración de auto escalado:
 
-1. Review CloudWatch metrics to identify any bottlenecks
-2. Adjust provisioned concurrency settings if needed
-3. Tune DynamoDB auto scaling parameters based on observed scaling behavior
-4. Document your findings and recommendations
+1. Revisa las métricas de CloudWatch para identificar cualquier cuello de botella
+2. Ajusta la configuración de concurrencia aprovisionada si es necesario
+3. Afina los parámetros de auto escalado de DynamoDB basado en el comportamiento de escalado observado
+4. Documenta tus hallazgos y recomendaciones
 
-## Conclusion
+## Conclusión
 
-By completing this lab, you have implemented auto scaling for TechModa's serverless product API, ensuring it can handle variable traffic patterns, including sudden spikes during promotional events. This configuration helps maintain performance and availability while optimizing costs during periods of lower traffic.
+Al completar este laboratorio, has implementado auto escalado para la API serverless de productos de TechModa, asegurando que pueda manejar patrones de tráfico variables, incluyendo picos repentinos durante eventos promocionales. Esta configuración ayuda a mantener el rendimiento y la disponibilidad mientras optimiza los costos durante períodos de menor tráfico.
 
-In the next lab, you will learn how to implement disaster recovery strategies to protect against regional outages and ensure business continuity.
+En el próximo laboratorio, aprenderás a implementar estrategias de recuperación ante desastres para proteger contra interrupciones regionales y garantizar la continuidad del negocio.
 
-## Additional Resources
+## Recursos Adicionales
 
-- [Lambda Scaling and Performance](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html)
-- [DynamoDB Auto Scaling](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/AutoScaling.html)
-- [AWS Well-Architected Framework - Performance Efficiency Pillar](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)
+- [Escalado y Rendimiento de Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html)
+- [Auto Escalado de DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/AutoScaling.html)
+- [Marco AWS Well-Architected - Pilar de Eficiencia de Rendimiento](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)

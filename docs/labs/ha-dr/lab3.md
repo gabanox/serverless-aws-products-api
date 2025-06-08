@@ -1,42 +1,42 @@
-# Lab 3: Disaster Recovery Strategies
+# Laboratorio 3: Estrategias de Recuperación ante Desastres
 
-## Overview
+## Descripción General
 
-In this lab, you will implement disaster recovery strategies for TechModa's serverless product API to ensure business continuity in the event of a regional AWS outage. You'll explore different DR approaches and implement a solution that meets TechModa's recovery time and recovery point objectives.
+En este laboratorio, implementarás estrategias de recuperación ante desastres para la API serverless de productos de TechModa para garantizar la continuidad del negocio en caso de una interrupción regional de AWS. Explorarás diferentes enfoques de DR e implementarás una solución que cumpla con los objetivos de tiempo y punto de recuperación de TechModa.
 
-**Duration**: Approximately 90 minutes
+**Duración**: Aproximadamente 90 minutos
 
-**Objectives**:
-- Understand different disaster recovery strategies (backup-restore, pilot light, warm standby, multi-site)
-- Implement cross-region replication for DynamoDB
-- Configure a cross-region API deployment
-- Implement failover mechanisms
-- Test disaster recovery procedures
-- Document recovery processes and procedures
+**Objetivos**:
+- Comprender diferentes estrategias de recuperación ante desastres (respaldo-restauración, luz piloto, espera activa, multi-sitio)
+- Implementar replicación entre regiones para DynamoDB
+- Configurar un despliegue de API entre regiones
+- Implementar mecanismos de conmutación por error
+- Probar procedimientos de recuperación ante desastres
+- Documentar procesos y procedimientos de recuperación
 
-## Business Context
+## Contexto Empresarial
 
-TechModa experienced a significant business disruption during a 3-hour regional AWS outage last quarter. With no cross-region recovery strategy in place, their e-commerce platform was completely unavailable, resulting in approximately $350,000 in lost sales and damaged customer trust.
+TechModa experimentó una interrupción significativa del negocio durante una caída regional de AWS de 3 horas el trimestre pasado. Sin una estrategia de recuperación entre regiones implementada, su plataforma de comercio electrónico estuvo completamente indisponible, resultando en aproximadamente $350,000 en ventas perdidas y daño a la confianza del cliente.
 
-The CTO has mandated implementing a disaster recovery solution with:
-- Recovery Point Objective (RPO) of 15 minutes or less
-- Recovery Time Objective (RTO) of 30 minutes or less
+El CTO ha ordenado implementar una solución de recuperación ante desastres con:
+- Objetivo de Punto de Recuperación (RPO) de 15 minutos o menos
+- Objetivo de Tiempo de Recuperación (RTO) de 30 minutos o menos
 
-## Architecture
+## Arquitectura
 
-![Disaster Recovery Architecture](../../assets/images/dr-architecture.png)
+![Arquitectura de Recuperación ante Desastres](../../assets/images/dr-architecture.png)
 
-The architecture will include:
-- Primary region deployment (e.g., us-east-1)
-- Secondary region deployment (e.g., us-west-2)
-- DynamoDB global tables for cross-region replication
-- Route 53 for DNS failover
+La arquitectura incluirá:
+- Despliegue en región primaria (ej., us-east-1)
+- Despliegue en región secundaria (ej., us-west-2)
+- Tablas globales de DynamoDB para replicación entre regiones
+- Route 53 para conmutación por error de DNS
 
-## Step 1: Set Up DynamoDB Global Tables
+## Paso 1: Configurar Tablas Globales de DynamoDB
 
-Begin by configuring DynamoDB global tables to replicate data across regions:
+Comienza configurando tablas globales de DynamoDB para replicar datos entre regiones:
 
-1. Update the `template.yaml` file to enable DynamoDB streams, which are required for global tables:
+1. Actualiza el archivo `template.yaml` para habilitar flujos de DynamoDB, que son requeridos para tablas globales:
 
 ```yaml
 Resources:
@@ -57,14 +57,14 @@ Resources:
         PointInTimeRecoveryEnabled: true
 ```
 
-2. Deploy the updated table in your primary region:
+2. Despliega la tabla actualizada en tu región primaria:
 
 ```bash
 sam build
 sam deploy --stack-name techmoda-api-primary --region us-east-1
 ```
 
-3. Create a global table using the AWS CLI:
+3. Crea una tabla global utilizando la AWS CLI:
 
 ```bash
 aws dynamodb create-global-table \
@@ -73,40 +73,40 @@ aws dynamodb create-global-table \
   --region us-east-1
 ```
 
-## Step 2: Deploy API Stack to Secondary Region
+## Paso 2: Desplegar Pila de API en Región Secundaria
 
-Now, deploy the entire API stack to a secondary region:
+Ahora, despliega toda la pila de API en una región secundaria:
 
-1. Deploy the SAM template to the secondary region:
+1. Despliega la plantilla SAM en la región secundaria:
 
 ```bash
 sam build
 sam deploy --stack-name techmoda-api-secondary --region us-west-2
 ```
 
-2. Verify that both deployments are working correctly:
+2. Verifica que ambos despliegues estén funcionando correctamente:
 
 ```bash
-# Test primary region
-curl https://<primary-api-id>.execute-api.us-east-1.amazonaws.com/Prod/products
+# Probar región primaria
+curl https://<id-api-primaria>.execute-api.us-east-1.amazonaws.com/Prod/products
 
-# Test secondary region
-curl https://<secondary-api-id>.execute-api.us-west-2.amazonaws.com/Prod/products
+# Probar región secundaria
+curl https://<id-api-secundaria>.execute-api.us-west-2.amazonaws.com/Prod/products
 ```
 
-## Step 3: Set Up DNS Failover with Route 53
+## Paso 3: Configurar Conmutación por Error de DNS con Route 53
 
-Configure Route 53 for DNS failover between regions:
+Configura Route 53 para conmutación por error de DNS entre regiones:
 
-1. Create a Route 53 health check for the primary region API:
+1. Crea una verificación de salud de Route 53 para la API de la región primaria:
 
 ```bash
 aws route53 create-health-check \
   --caller-reference $(date +%s) \
-  --health-check-config "{\"Type\":\"HTTPS\",\"FullyQualifiedDomainName\":\"<primary-api-id>.execute-api.us-east-1.amazonaws.com\",\"Port\":443,\"ResourcePath\":\"/Prod/health\",\"RequestInterval\":30,\"FailureThreshold\":3}"
+  --health-check-config "{\"Type\":\"HTTPS\",\"FullyQualifiedDomainName\":\"<id-api-primaria>.execute-api.us-east-1.amazonaws.com\",\"Port\":443,\"ResourcePath\":\"/Prod/health\",\"RequestInterval\":30,\"FailureThreshold\":3}"
 ```
 
-2. Create a Route 53 hosted zone (if you don't have one already):
+2. Crea una zona alojada de Route 53 (si aún no tienes una):
 
 ```bash
 aws route53 create-hosted-zone \
@@ -114,11 +114,11 @@ aws route53 create-hosted-zone \
   --caller-reference $(date +%s)
 ```
 
-3. Configure DNS failover records:
+3. Configura registros de conmutación por error de DNS:
 
 ```bash
 aws route53 change-resource-record-sets \
-  --hosted-zone-id <your-hosted-zone-id> \
+  --hosted-zone-id <id-de-tu-zona-alojada> \
   --change-batch '{
     "Changes": [
       {
@@ -130,10 +130,10 @@ aws route53 change-resource-record-sets \
           "Failover": "PRIMARY",
           "AliasTarget": {
             "HostedZoneId": "Z2FDTNDATAQYW2",
-            "DNSName": "<primary-api-id>.execute-api.us-east-1.amazonaws.com",
+            "DNSName": "<id-api-primaria>.execute-api.us-east-1.amazonaws.com",
             "EvaluateTargetHealth": true
           },
-          "HealthCheckId": "<your-health-check-id>"
+          "HealthCheckId": "<id-de-tu-verificacion-de-salud>"
         }
       },
       {
@@ -145,7 +145,7 @@ aws route53 change-resource-record-sets \
           "Failover": "SECONDARY",
           "AliasTarget": {
             "HostedZoneId": "Z2FDTNDATAQYW2",
-            "DNSName": "<secondary-api-id>.execute-api.us-west-2.amazonaws.com",
+            "DNSName": "<id-api-secundaria>.execute-api.us-west-2.amazonaws.com",
             "EvaluateTargetHealth": true
           }
         }
@@ -154,11 +154,11 @@ aws route53 change-resource-record-sets \
   }'
 ```
 
-## Step 4: Implement a Health Check Endpoint
+## Paso 4: Implementar un Punto de Verificación de Salud
 
-Add a health check endpoint to your API for Route 53 to monitor:
+Añade un punto de verificación de salud a tu API para que Route 53 lo monitoree:
 
-1. Create a new Lambda function for the health check:
+1. Crea una nueva función Lambda para la verificación de salud:
 
 ```javascript
 // src/healthCheck.js
@@ -174,7 +174,7 @@ exports.handler = async (event) => {
 };
 ```
 
-2. Update the `template.yaml` file to add the health check endpoint:
+2. Actualiza el archivo `template.yaml` para añadir el punto de verificación de salud:
 
 ```yaml
 Resources:
@@ -191,7 +191,7 @@ Resources:
             Method: get
 ```
 
-3. Deploy the updates to both regions:
+3. Despliega las actualizaciones en ambas regiones:
 
 ```bash
 sam build
@@ -199,28 +199,28 @@ sam deploy --stack-name techmoda-api-primary --region us-east-1
 sam deploy --stack-name techmoda-api-secondary --region us-west-2
 ```
 
-## Step 5: Test Disaster Recovery
+## Paso 5: Probar Recuperación ante Desastres
 
-Now, let's test the disaster recovery capabilities:
+Ahora, probemos las capacidades de recuperación ante desastres:
 
-1. Create a script to continuously monitor both regions:
+1. Crea un script para monitorear continuamente ambas regiones:
 
 ```bash
 #!/bin/bash
-PRIMARY_URL="https://<primary-api-id>.execute-api.us-east-1.amazonaws.com/Prod/health"
-SECONDARY_URL="https://<secondary-api-id>.execute-api.us-west-2.amazonaws.com/Prod/health"
+PRIMARY_URL="https://<id-api-primaria>.execute-api.us-east-1.amazonaws.com/Prod/health"
+SECONDARY_URL="https://<id-api-secundaria>.execute-api.us-west-2.amazonaws.com/Prod/health"
 CUSTOM_DOMAIN="https://api.techmoda-example.com/Prod/health"
 
 while true; do
-  echo "$(date) - Testing primary region..."
+  echo "$(date) - Probando región primaria..."
   curl -s $PRIMARY_URL
   echo -e "\n"
   
-  echo "$(date) - Testing secondary region..."
+  echo "$(date) - Probando región secundaria..."
   curl -s $SECONDARY_URL
   echo -e "\n"
   
-  echo "$(date) - Testing custom domain (should failover)..."
+  echo "$(date) - Probando dominio personalizado (debería conmutar por error)..."
   curl -s $CUSTOM_DOMAIN
   echo -e "\n\n"
   
@@ -228,34 +228,34 @@ while true; do
 done
 ```
 
-2. Simulate a regional outage by either:
-   - Disabling the primary region API Gateway stage
-   - Modifying the health check Lambda to return a failure status in the primary region
+2. Simula una interrupción regional mediante:
+   - Deshabilitando la etapa de API Gateway de la región primaria
+   - Modificando la función Lambda de verificación de salud para devolver un estado de fallo en la región primaria
 
-3. Monitor the failover behavior:
-   - How long does it take for Route 53 to detect the failure?
-   - Does traffic successfully route to the secondary region?
-   - Is data consistency maintained across regions?
+3. Monitorea el comportamiento de conmutación por error:
+   - ¿Cuánto tiempo tarda Route 53 en detectar el fallo?
+   - ¿El tráfico se enruta correctamente a la región secundaria?
+   - ¿Se mantiene la consistencia de datos entre regiones?
 
-## Step 6: Document Disaster Recovery Procedures
+## Paso 6: Documentar Procedimientos de Recuperación ante Desastres
 
-Create a comprehensive disaster recovery playbook:
+Crea un manual completo de recuperación ante desastres:
 
-1. Document the steps to manually initiate failover
-2. Create procedures for validating the health of the secondary region
-3. Outline steps for failing back to the primary region once it's available
-4. Include contact information for key stakeholders
-5. Document RPO and RTO measurements from your tests
+1. Documenta los pasos para iniciar manualmente la conmutación por error
+2. Crea procedimientos para validar la salud de la región secundaria
+3. Describe los pasos para volver a la región primaria una vez que esté disponible
+4. Incluye información de contacto de las partes interesadas clave
+5. Documenta las mediciones de RPO y RTO de tus pruebas
 
-## Conclusion
+## Conclusión
 
-By completing this lab, you have implemented a cross-region disaster recovery strategy for TechModa's serverless product API that meets their RPO and RTO requirements. This configuration ensures business continuity even in the event of a complete regional outage.
+Al completar este laboratorio, has implementado una estrategia de recuperación ante desastres entre regiones para la API serverless de productos de TechModa que cumple con sus requisitos de RPO y RTO. Esta configuración garantiza la continuidad del negocio incluso en el caso de una interrupción regional completa.
 
-In the next lab, you will learn how to implement comprehensive monitoring with CloudWatch to detect and respond to issues before they impact customers.
+En el próximo laboratorio, aprenderás a implementar monitorización exhaustiva con CloudWatch para detectar y responder a problemas antes de que afecten a los clientes.
 
-## Additional Resources
+## Recursos Adicionales
 
-- [DynamoDB Global Tables](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html)
-- [Route 53 DNS Failover](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
-- [AWS Well-Architected Framework - Reliability Pillar](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
-- [Disaster Recovery Strategies on AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html)
+- [Tablas Globales de DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html)
+- [Conmutación por Error de DNS de Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
+- [Marco AWS Well-Architected - Pilar de Fiabilidad](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
+- [Estrategias de Recuperación ante Desastres en AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html)

@@ -1,53 +1,53 @@
-# Lab 4: Monitoring with CloudWatch
+# Laboratorio 4: Monitorización con CloudWatch
 
-## Overview
+## Descripción General
 
-In this lab, you will implement comprehensive monitoring for TechModa's serverless product API using Amazon CloudWatch. You'll set up metrics, alarms, dashboards, and automated responses to ensure that any potential issues are detected and addressed before they impact customers.
+En este laboratorio, implementarás monitorización exhaustiva para la API serverless de productos de TechModa utilizando Amazon CloudWatch. Configurarás métricas, alarmas, paneles de control y respuestas automatizadas para asegurar que cualquier problema potencial sea detectado y abordado antes de que afecte a los clientes.
 
-**Duration**: Approximately 90 minutes
+**Duración**: Aproximadamente 90 minutos
 
-**Objectives**:
-- Configure detailed CloudWatch metrics for Lambda, API Gateway, and DynamoDB
-- Create custom metrics for business-relevant indicators
-- Set up CloudWatch alarms with appropriate thresholds
-- Build a comprehensive CloudWatch dashboard
-- Implement automated responses with CloudWatch Events and Lambda
-- Create a notification system for critical alerts
+**Objetivos**:
+- Configurar métricas detalladas de CloudWatch para Lambda, API Gateway y DynamoDB
+- Crear métricas personalizadas para indicadores relevantes para el negocio
+- Configurar alarmas de CloudWatch con umbrales apropiados
+- Construir un panel de control exhaustivo en CloudWatch
+- Implementar respuestas automatizadas con CloudWatch Events y Lambda
+- Crear un sistema de notificación para alertas críticas
 
-## Business Context
+## Contexto Empresarial
 
-TechModa has experienced several performance issues with their product API that weren't detected until customers reported problems. In one instance, a gradual increase in API latency went unnoticed for several hours, resulting in abandoned shopping carts and lost sales.
+TechModa ha experimentado varios problemas de rendimiento con su API de productos que no fueron detectados hasta que los clientes reportaron problemas. En un caso, un aumento gradual en la latencia de la API pasó desapercibido durante varias horas, resultando en carritos de compra abandonados y ventas perdidas.
 
-The CTO wants to implement proactive monitoring that can:
-- Detect issues before they impact customers
-- Provide real-time visibility into system performance
-- Automatically respond to common issues
-- Alert the operations team to critical problems
+El CTO quiere implementar monitorización proactiva que pueda:
+- Detectar problemas antes de que afecten a los clientes
+- Proporcionar visibilidad en tiempo real del rendimiento del sistema
+- Responder automáticamente a problemas comunes
+- Alertar al equipo de operaciones sobre problemas críticos
 
-## Architecture
+## Arquitectura
 
-![Monitoring Architecture](../../assets/images/monitoring-architecture.png)
+![Arquitectura de Monitorización](../../assets/images/monitoring-architecture.png)
 
-The architecture will include:
-- CloudWatch metrics and alarms
-- Custom CloudWatch dashboard
-- CloudWatch Events rules
-- SNS topics for notifications
-- Lambda functions for automated responses
+La arquitectura incluirá:
+- Métricas y alarmas de CloudWatch
+- Panel de control personalizado de CloudWatch
+- Reglas de CloudWatch Events
+- Temas SNS para notificaciones
+- Funciones Lambda para respuestas automatizadas
 
-## Step 1: Configure Enhanced CloudWatch Metrics
+## Paso 1: Configurar Métricas Mejoradas de CloudWatch
 
-Begin by enabling detailed CloudWatch metrics for your Lambda functions:
+Comienza habilitando métricas detalladas de CloudWatch para tus funciones Lambda:
 
-1. Update the `template.yaml` file to enable detailed monitoring:
+1. Actualiza el archivo `template.yaml` para habilitar monitorización detallada:
 
 ```yaml
 Globals:
   Function:
-    Tracing: Active  # Enables X-Ray tracing
+    Tracing: Active  # Habilita el rastreo con X-Ray
 ```
 
-2. Update individual function configurations:
+2. Actualiza configuraciones de funciones individuales:
 
 ```yaml
 Resources:
@@ -57,24 +57,24 @@ Resources:
       Handler: src/getProducts.handler
       Runtime: nodejs14.x
       Tracing: Active
-      # Add additional monitoring configuration
+      # Añadir configuración adicional de monitorización
       Environment:
         Variables:
           LOG_LEVEL: INFO
 ```
 
-3. Deploy the updated configuration:
+3. Despliega la configuración actualizada:
 
 ```bash
 sam build
 sam deploy
 ```
 
-## Step 2: Create Custom Metrics
+## Paso 2: Crear Métricas Personalizadas
 
-Next, modify your Lambda functions to publish custom metrics:
+A continuación, modifica tus funciones Lambda para publicar métricas personalizadas:
 
-1. Update your Lambda function code to publish custom metrics:
+1. Actualiza el código de tu función Lambda para publicar métricas personalizadas:
 
 ```javascript
 // src/getProducts.js
@@ -85,14 +85,14 @@ exports.handler = async (event) => {
   const startTime = new Date().getTime();
   
   try {
-    // Existing function code to get products
+    // Código existente para obtener productos
     const dynamoDB = new AWS.DynamoDB.DocumentClient();
     const result = await dynamoDB.scan({ TableName: process.env.PRODUCTS_TABLE }).promise();
     
-    // Calculate execution time
+    // Calcular tiempo de ejecución
     const executionTime = new Date().getTime() - startTime;
     
-    // Publish custom metrics
+    // Publicar métricas personalizadas
     await cloudwatch.putMetricData({
       Namespace: 'TechModa/ProductAPI',
       MetricData: [
@@ -118,7 +118,7 @@ exports.handler = async (event) => {
       body: JSON.stringify(result.Items)
     };
   } catch (error) {
-    // Publish error metric
+    // Publicar métrica de error
     await cloudwatch.putMetricData({
       Namespace: 'TechModa/ProductAPI',
       MetricData: [
@@ -136,13 +136,13 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({ error: 'Failed to retrieve products' })
+      body: JSON.stringify({ error: 'Error al obtener productos' })
     };
   }
 };
 ```
 
-2. Update the IAM role to allow publishing metrics:
+2. Actualiza el rol IAM para permitir la publicación de métricas:
 
 ```yaml
 Resources:
@@ -177,11 +177,11 @@ Resources:
                 Resource: '*'
 ```
 
-## Step 3: Set Up CloudWatch Alarms
+## Paso 3: Configurar Alarmas de CloudWatch
 
-Create CloudWatch alarms to alert on critical metrics:
+Crea alarmas de CloudWatch para alertar sobre métricas críticas:
 
-1. Add the following alarms to your `template.yaml`:
+1. Añade las siguientes alarmas a tu archivo `template.yaml`:
 
 ```yaml
 Resources:
@@ -189,7 +189,7 @@ Resources:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: !Sub ${AWS::StackName}-APILatencyAlarm
-      AlarmDescription: Alarm when API latency exceeds threshold
+      AlarmDescription: Alarma cuando la latencia de la API excede el umbral
       Namespace: AWS/ApiGateway
       MetricName: Latency
       Dimensions:
@@ -207,7 +207,7 @@ Resources:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: !Sub ${AWS::StackName}-API5xxErrorsAlarm
-      AlarmDescription: Alarm when API returns 5xx errors
+      AlarmDescription: Alarma cuando la API devuelve errores 5xx
       Namespace: AWS/ApiGateway
       MetricName: 5XXError
       Dimensions:
@@ -226,7 +226,7 @@ Resources:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: !Sub ${AWS::StackName}-DynamoDBThrottlingAlarm
-      AlarmDescription: Alarm when DynamoDB is throttling requests
+      AlarmDescription: Alarma cuando DynamoDB está limitando solicitudes
       Namespace: AWS/DynamoDB
       MetricName: ThrottledRequests
       Dimensions:
@@ -253,40 +253,40 @@ Resources:
       Endpoint: ops-team@techmoda-example.com
 ```
 
-## Step 4: Create an Automated Response
+## Paso 4: Crear una Respuesta Automatizada
 
-Implement an automated response to handle API errors:
+Implementa una respuesta automatizada para manejar errores de API:
 
-1. Create a new Lambda function for automated error response:
+1. Crea una nueva función Lambda para respuesta automatizada a errores:
 
 ```javascript
 // src/errorResponse.js
 exports.handler = async (event) => {
-  console.log('Received alarm:', JSON.stringify(event, null, 2));
+  console.log('Alarma recibida:', JSON.stringify(event, null, 2));
   
-  // Parse the alarm data
+  // Analizar los datos de la alarma
   const message = JSON.parse(event.Records[0].Sns.Message);
   
-  // Take automated action based on the alarm
+  // Tomar acción automatizada basada en la alarma
   if (message.AlarmName.includes('API5xxErrorsAlarm')) {
-    console.log('Detected 5xx errors, initiating automated response');
+    console.log('Detectados errores 5xx, iniciando respuesta automatizada');
     
-    // Here you would implement your automated response
-    // Examples:
-    // - Restart the API stage
-    // - Scale up resources
-    // - Clear caches
-    // - Notify specific team members
+    // Aquí implementarías tu respuesta automatizada
+    // Ejemplos:
+    // - Reiniciar la etapa de API
+    // - Escalar recursos
+    // - Limpiar cachés
+    // - Notificar a miembros específicos del equipo
   }
   
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: 'Automated response initiated' })
+    body: JSON.stringify({ message: 'Respuesta automatizada iniciada' })
   };
 };
 ```
 
-2. Add the function to your `template.yaml`:
+2. Añade la función a tu archivo `template.yaml`:
 
 ```yaml
 Resources:
@@ -302,11 +302,11 @@ Resources:
             Topic: !Ref AlertTopic
 ```
 
-## Step 5: Create a CloudWatch Dashboard
+## Paso 5: Crear un Panel de Control en CloudWatch
 
-Build a comprehensive dashboard to monitor your serverless API:
+Construye un panel de control exhaustivo para monitorear tu API serverless:
 
-1. Add a CloudWatch dashboard to your `template.yaml`:
+1. Añade un panel de control de CloudWatch a tu archivo `template.yaml`:
 
 ```yaml
 Resources:
@@ -331,7 +331,7 @@ Resources:
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${AWS::Region}",
-                "title": "API Latency",
+                "title": "Latencia de API",
                 "period": 60
               }
             },
@@ -350,7 +350,7 @@ Resources:
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${AWS::Region}",
-                "title": "API Requests and Errors",
+                "title": "Solicitudes y Errores de API",
                 "period": 60
               }
             },
@@ -370,7 +370,7 @@ Resources:
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${AWS::Region}",
-                "title": "Lambda Invocations",
+                "title": "Invocaciones Lambda",
                 "period": 60
               }
             },
@@ -390,7 +390,7 @@ Resources:
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${AWS::Region}",
-                "title": "Lambda Duration",
+                "title": "Duración Lambda",
                 "period": 60
               }
             },
@@ -408,7 +408,7 @@ Resources:
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${AWS::Region}",
-                "title": "DynamoDB Capacity Consumption",
+                "title": "Consumo de Capacidad DynamoDB",
                 "period": 60
               }
             },
@@ -427,7 +427,7 @@ Resources:
                 "view": "timeSeries",
                 "stacked": false,
                 "region": "${AWS::Region}",
-                "title": "Custom Metrics",
+                "title": "Métricas Personalizadas",
                 "period": 60
               }
             }
@@ -435,29 +435,29 @@ Resources:
         }
 ```
 
-## Step 6: Test the Monitoring System
+## Paso 6: Probar el Sistema de Monitorización
 
-Now, let's test the monitoring system:
+Ahora, vamos a probar el sistema de monitorización:
 
-1. Generate some traffic to the API:
+1. Genera algo de tráfico a la API:
 
 ```bash
 #!/bin/bash
-API_URL="<your-api-url>"
+API_URL="<url-de-tu-api>"
 
-# Normal traffic
+# Tráfico normal
 for i in $(seq 1 50); do
   curl -s "$API_URL/products" > /dev/null
   sleep 1
 done
 
-# Generate some errors
+# Generar algunos errores
 for i in $(seq 1 5); do
   curl -s -X POST "$API_URL/products" -d '{"invalid": "data"}' > /dev/null
   sleep 1
 done
 
-# Heavy traffic
+# Tráfico pesado
 for i in $(seq 1 20); do
   for j in $(seq 1 10); do
     curl -s "$API_URL/products" > /dev/null &
@@ -467,18 +467,18 @@ for i in $(seq 1 20); do
 done
 ```
 
-2. Monitor the CloudWatch dashboard to observe the metrics
-3. Trigger an alarm to test the notification system and automated response
+2. Monitorea el panel de control de CloudWatch para observar las métricas
+3. Activa una alarma para probar el sistema de notificación y respuesta automatizada
 
-## Conclusion
+## Conclusión
 
-By completing this lab, you have implemented comprehensive monitoring for TechModa's serverless product API, ensuring that potential issues can be detected and addressed before they impact customers. This monitoring system provides real-time visibility into system performance and can automatically respond to common issues.
+Al completar este laboratorio, has implementado monitorización exhaustiva para la API serverless de productos de TechModa, asegurando que los problemas potenciales puedan ser detectados y abordados antes de que afecten a los clientes. Este sistema de monitorización proporciona visibilidad en tiempo real del rendimiento del sistema y puede responder automáticamente a problemas comunes.
 
-In the next lab, you will learn how to implement backup solutions to protect against data loss and ensure that critical data can be recovered if needed.
+En el próximo laboratorio, implementarás un proyecto capstone que integrará todos los conceptos aprendidos en un sistema completo de alta disponibilidad y recuperación ante desastres.
 
-## Additional Resources
+## Recursos Adicionales
 
-- [CloudWatch Metrics and Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html)
-- [CloudWatch Dashboards](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html)
-- [AWS Lambda Monitoring](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html)
-- [DynamoDB Monitoring](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/monitoring.html)
+- [Métricas y Alarmas de CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html)
+- [Paneles de Control de CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html)
+- [Monitorización de AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html)
+- [Monitorización de DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/monitoring.html)
