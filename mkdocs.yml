@@ -1,10 +1,24 @@
 site_name: TechModa AWS Labs
 site_description: Laboratories for AWS High Availability and Disaster Recovery
+# Tema Material Design
 theme:
   name: material
+  language: es
+  
+  # Configuración de colores
   palette:
-    primary: indigo
-    accent: indigo
+    - scheme: default
+      primary: white
+      accent: white
+      toggle:
+        icon: material/brightness-7
+        name: Cambiar a modo oscuro
+    - scheme: slate
+      primary: white
+      accent: white
+      toggle:
+        icon: material/brightness-4
+        name: Cambiar a modo claro
   features:
     - navigation.tabs
     - navigation.sections
@@ -26,8 +40,8 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - tables
   - def_list
 
@@ -37,9 +51,9 @@ nav:
     - Overview: labs/index.md
     - High Availability & Disaster Recovery:
       - Introduction: labs/ha-dr/index.md
-      - Lab 1: Setting up Multi-AZ Architecture: labs/ha-dr/lab1.md
-      - Lab 2: Implementing Auto Scaling: labs/ha-dr/lab2.md
-      - Lab 3: Disaster Recovery Strategies: labs/ha-dr/lab3.md
-      - Lab 4: Monitoring with CloudWatch: labs/ha-dr/lab4.md
-      - Lab 5: Implementing Backup Solutions: labs/ha-dr/lab5.md
+      - "Lab 1: Setting up Multi-AZ Architecture": labs/ha-dr/lab1.md
+      - "Lab 2: Implementing Auto Scaling": labs/ha-dr/lab2.md
+      - "Lab 3: Disaster Recovery Strategies": labs/ha-dr/lab3.md
+      - "Lab 4: Monitoring with CloudWatch": labs/ha-dr/lab4.md
+      - "Proyecto Capstone: Solución Integral de Alta Disponibilidad": labs/ha-dr/proyecto-capstone.md
   - Resources: resources.md
