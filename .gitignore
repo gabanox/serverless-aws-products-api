@@ -57,6 +57,10 @@ aws/dist/
 sam-installation/
 aws/
 
+# MkDocs
+site/
+site_s3/
+
 # Otros
 .serverless/
 **/.claude/settings.local.json
