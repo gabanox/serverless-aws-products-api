@@ -1,37 +1,37 @@
-# Lab 1: Setting up Multi-AZ Architecture
+# Laboratorio 1: Configuración de Arquitectura Multi-AZ
 
-## Overview
+## Descripción General
 
-In this lab, you will configure TechModa's serverless product API to operate across multiple Availability Zones (AZs) to ensure high availability. While AWS Lambda and API Gateway are inherently multi-AZ services, you will need to ensure that the DynamoDB table that stores product information is properly configured for high availability.
+En este laboratorio, configurarás la API serverless de productos de TechModa para operar a través de múltiples Zonas de Disponibilidad (AZs) para garantizar alta disponibilidad. Aunque AWS Lambda y API Gateway son servicios inherentemente multi-AZ, necesitarás asegurarte de que la tabla de DynamoDB que almacena la información de productos esté configurada correctamente para alta disponibilidad.
 
-**Duration**: Approximately 60 minutes
+**Duración**: Aproximadamente 60 minutos
 
-**Objectives**:
-- Understand AWS Availability Zone architecture
-- Configure DynamoDB for multi-AZ operation
-- Test failover scenarios
-- Verify high availability of the entire API stack
+**Objetivos**:
+- Comprender la arquitectura de Zonas de Disponibilidad de AWS
+- Configurar DynamoDB para operación multi-AZ
+- Probar escenarios de conmutación por error
+- Verificar la alta disponibilidad de toda la pila de la API
 
-## Business Context
+## Contexto Empresarial
 
-TechModa's product catalog must be available 24/7 to serve customers across different time zones. A single AZ failure could potentially disrupt the entire e-commerce platform if the infrastructure is not properly designed for high availability.
+El catálogo de productos de TechModa debe estar disponible 24/7 para atender a clientes en diferentes zonas horarias. Un fallo en una sola AZ podría potencialmente interrumpir toda la plataforma de comercio electrónico si la infraestructura no está diseñada adecuadamente para alta disponibilidad.
 
-In this lab, you will help TechModa ensure that their product catalog API can continue to function even if an entire Availability Zone becomes unavailable.
+En este laboratorio, ayudarás a TechModa a garantizar que su API de catálogo de productos pueda continuar funcionando incluso si una Zona de Disponibilidad completa deja de estar disponible.
 
-## Architecture
+## Arquitectura
 
-![Multi-AZ Architecture](../../assets/images/multi-az-architecture.png)
+![Arquitectura Multi-AZ](../../assets/images/multi-az-architecture.png)
 
-The architecture will include:
-- API Gateway (inherently multi-AZ)
-- Lambda functions (automatically distributed across AZs)
-- DynamoDB with point-in-time recovery enabled
+La arquitectura incluirá:
+- API Gateway (inherentemente multi-AZ)
+- Funciones Lambda (distribuidas automáticamente entre AZs)
+- DynamoDB con recuperación a un punto en el tiempo habilitada
 
-## Step 1: Examine the Current Architecture
+## Paso 1: Examinar la Arquitectura Actual
 
-Begin by examining the current serverless API setup to understand its components.
+Comienza examinando la configuración actual de la API serverless para entender sus componentes.
 
-1. Review the `template.yaml` file to understand how the DynamoDB table is currently configured:
+1. Revisa el archivo `template.yaml` para entender cómo está configurada actualmente la tabla DynamoDB:
 
 ```yaml
 Resources:
@@ -48,11 +48,11 @@ Resources:
           KeyType: HASH
 ```
 
-## Step 2: Update DynamoDB Configuration for High Availability
+## Paso 2: Actualizar la Configuración de DynamoDB para Alta Disponibilidad
 
-Modify the SAM template to ensure the DynamoDB table is configured for high availability:
+Modifica la plantilla SAM para asegurar que la tabla DynamoDB esté configurada para alta disponibilidad:
 
-1. Update the `template.yaml` file to enable point-in-time recovery for the DynamoDB table:
+1. Actualiza el archivo `template.yaml` para habilitar la recuperación a un punto en el tiempo para la tabla DynamoDB:
 
 ```yaml
 Resources:
@@ -71,68 +71,68 @@ Resources:
         PointInTimeRecoveryEnabled: true
 ```
 
-2. Deploy the updated configuration:
+2. Despliega la configuración actualizada:
 
 ```bash
 sam build
 sam deploy
 ```
 
-## Step 3: Verify Multi-AZ Functionality
+## Paso 3: Verificar la Funcionalidad Multi-AZ
 
-Now that you've configured the DynamoDB table for high availability, let's verify that the entire stack is resilient to AZ failures.
+Ahora que has configurado la tabla DynamoDB para alta disponibilidad, vamos a verificar que toda la pila sea resistente a fallos de AZ.
 
-1. Use the AWS CLI to check that DynamoDB is configured correctly:
-
-```bash
-aws dynamodb describe-table --table-name <your-table-name> | grep PointInTimeRecoveryStatus
-```
-
-2. Verify that Lambda functions and API Gateway are deployed across multiple AZs (this is the default behavior):
+1. Usa la AWS CLI para comprobar que DynamoDB está configurado correctamente:
 
 ```bash
-aws lambda get-function --function-name <your-function-name>
+aws dynamodb describe-table --table-name <nombre-de-tu-tabla> | grep PointInTimeRecoveryStatus
 ```
 
-## Step 4: Test High Availability
+2. Verifica que las funciones Lambda y API Gateway estén desplegadas a través de múltiples AZs (este es el comportamiento predeterminado):
 
-To test the high availability of your setup, you will simulate different failure scenarios:
+```bash
+aws lambda get-function --function-name <nombre-de-tu-función>
+```
 
-1. Create a test script that continuously makes requests to your API:
+## Paso 4: Probar la Alta Disponibilidad
+
+Para probar la alta disponibilidad de tu configuración, simularás diferentes escenarios de fallo:
+
+1. Crea un script de prueba que realice solicitudes continuas a tu API:
 
 ```bash
 #!/bin/bash
-API_URL="<your-api-url>"
+API_URL="<url-de-tu-api>"
 
 while true; do
-  echo "Making request to $API_URL"
+  echo "Haciendo solicitud a $API_URL"
   curl -s "$API_URL/products"
   echo -e "\n"
   sleep 5
 done
 ```
 
-2. Run the test script while performing the following actions in the AWS Console:
-   - View CloudWatch Logs for Lambda invocations
-   - Monitor DynamoDB metrics
-   - Observe any impact on API availability
+2. Ejecuta el script de prueba mientras realizas las siguientes acciones en la Consola de AWS:
+   - Ver los Registros de CloudWatch para las invocaciones de Lambda
+   - Monitorear las métricas de DynamoDB
+   - Observar cualquier impacto en la disponibilidad de la API
 
-## Step 5: Analyze and Document Results
+## Paso 5: Analizar y Documentar Resultados
 
-Document the results of your high availability test:
+Documenta los resultados de tu prueba de alta disponibilidad:
 
-1. Did the API remain available throughout the test?
-2. How did the services respond to the simulated failures?
-3. What improvements could be made to further enhance availability?
+1. ¿La API permaneció disponible durante toda la prueba?
+2. ¿Cómo respondieron los servicios a los fallos simulados?
+3. ¿Qué mejoras podrían hacerse para mejorar aún más la disponibilidad?
 
-## Conclusion
+## Conclusión
 
-By completing this lab, you have ensured that TechModa's product catalog API is configured for high availability across multiple Availability Zones. This configuration helps protect against infrastructure failures in any single AZ and ensures that customers can access the product catalog 24/7.
+Al completar este laboratorio, has asegurado que la API de catálogo de productos de TechModa esté configurada para alta disponibilidad a través de múltiples Zonas de Disponibilidad. Esta configuración ayuda a proteger contra fallos de infraestructura en cualquier AZ individual y garantiza que los clientes puedan acceder al catálogo de productos 24/7.
 
-In the next lab, you will learn how to implement auto-scaling to handle variable traffic patterns, further enhancing the reliability of TechModa's e-commerce platform.
+En el próximo laboratorio, aprenderás a implementar auto-escalado para manejar patrones de tráfico variables, mejorando aún más la confiabilidad de la plataforma de comercio electrónico de TechModa.
 
-## Additional Resources
+## Recursos Adicionales
 
-- [AWS Well-Architected Framework - Reliability Pillar](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
-- [DynamoDB Global Tables](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html)
-- [Understanding AWS Lambda Function Scaling](https://docs.aws.amazon.com/lambda/latest/dg/invocation-scaling.html)
+- [Marco AWS Well-Architected - Pilar de Fiabilidad](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
+- [Tablas Globales de DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html)
+- [Entendiendo el Escalado de Funciones AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/invocation-scaling.html)

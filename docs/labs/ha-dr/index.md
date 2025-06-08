@@ -1,41 +1,41 @@
-# High Availability & Disaster Recovery
+# Alta Disponibilidad y Recuperación ante Desastres
 
-## Introduction
+## Introducción
 
-In today's digital economy, system downtime can have significant financial and reputational impacts on businesses. For TechModa, a fashion e-commerce platform operating globally, any disruption to their product catalog API or ordering system directly affects revenue and customer trust.
+En la economía digital actual, el tiempo de inactividad de los sistemas puede tener impactos financieros y reputacionales significativos en las empresas. Para TechModa, una plataforma de comercio electrónico de moda que opera globalmente, cualquier interrupción en su API de catálogo de productos o sistema de pedidos afecta directamente a los ingresos y la confianza del cliente.
 
-This series of labs focuses on implementing high availability and disaster recovery solutions for TechModa's serverless product API, ensuring that the business can maintain operations even in the face of infrastructure failures or disasters.
+Esta serie de laboratorios se centra en implementar soluciones de alta disponibilidad y recuperación ante desastres para la API serverless de productos de TechModa, asegurando que el negocio pueda mantener sus operaciones incluso frente a fallos de infraestructura o desastres.
 
-## Business Case: TechModa
+## Caso de Negocio: TechModa
 
-TechModa has experienced several incidents that have highlighted the need for improved availability and disaster recovery capabilities:
+TechModa ha experimentado varios incidentes que han resaltado la necesidad de mejorar las capacidades de disponibilidad y recuperación ante desastres:
 
-1. **Fashion Week Traffic Surge**: During Paris Fashion Week, traffic to the platform increased by 800%, causing the API to become unresponsive and resulting in an estimated $200,000 in lost sales.
+1. **Aumento de Tráfico durante la Semana de la Moda**: Durante la Semana de la Moda de París, el tráfico en la plataforma aumentó un 800%, causando que la API dejara de responder y resultando en una pérdida estimada de $200,000 en ventas.
 
-2. **Regional Service Disruption**: A regional AWS service disruption caused a 3-hour outage of the product catalog, affecting customers in Europe and resulting in negative social media coverage.
+2. **Interrupción de Servicio Regional**: Una interrupción regional del servicio AWS causó una caída de 3 horas del catálogo de productos, afectando a clientes en Europa y resultando en cobertura negativa en redes sociales.
 
-3. **Data Corruption Incident**: A deployment error led to partial data corruption in the product database, requiring 8 hours to restore from backups and reconcile recent transactions.
+3. **Incidente de Corrupción de Datos**: Un error de despliegue llevó a una corrupción parcial de datos en la base de datos de productos, requiriendo 8 horas para restaurar desde copias de seguridad y reconciliar transacciones recientes.
 
-TechModa's CTO has mandated the implementation of a comprehensive high availability and disaster recovery strategy that can:
+El CTO de TechModa ha ordenado la implementación de una estrategia integral de alta disponibilidad y recuperación ante desastres que pueda:
 
-- Ensure 99.99% uptime for the product catalog API
-- Support automatic scaling for up to 10x normal traffic
-- Guarantee recovery point objective (RPO) of less than 15 minutes
-- Achieve recovery time objective (RTO) of less than 30 minutes
-- Implement proactive monitoring and alerting to detect potential issues before they impact customers
+- Garantizar un tiempo de actividad del 99,99% para la API de catálogo de productos
+- Soportar escalado automático para hasta 10 veces el tráfico normal
+- Garantizar un objetivo de punto de recuperación (RPO) de menos de 15 minutos
+- Lograr un objetivo de tiempo de recuperación (RTO) de menos de 30 minutos
+- Implementar monitorización proactiva y alertas para detectar problemas potenciales antes de que afecten a los clientes
 
-## Labs Overview
+## Descripción General de los Laboratorios
 
-Through this series of labs, you will implement solutions to meet TechModa's requirements:
+A través de esta serie de laboratorios, implementarás soluciones para cumplir con los requisitos de TechModa:
 
-1. **[Setting up Multi-AZ Architecture](lab1.md)** - Distribute the serverless API across multiple Availability Zones to ensure continued operation even if an entire AZ fails.
+1. **[Configuración de Arquitectura Multi-AZ](lab1.md)** - Distribuir la API serverless a través de múltiples Zonas de Disponibilidad para garantizar la operación continua incluso si falla una AZ completa.
 
-2. **[Implementing Auto Scaling](lab2.md)** - Configure dynamic scaling of Lambda functions and DynamoDB capacity to handle variable traffic patterns.
+2. **[Implementación de Auto Escalado](lab2.md)** - Configurar el escalado dinámico de funciones Lambda y capacidad de DynamoDB para manejar patrones de tráfico variables.
 
-3. **[Disaster Recovery Strategies](lab3.md)** - Implement cross-region replication and recovery procedures to protect against regional failures.
+3. **[Estrategias de Recuperación ante Desastres](lab3.md)** - Implementar replicación entre regiones y procedimientos de recuperación para proteger contra fallos regionales.
 
-4. **[Monitoring with CloudWatch](lab4.md)** - Set up comprehensive monitoring, alerting, and automated incident response.
+4. **[Monitorización con CloudWatch](lab4.md)** - Configurar monitorización exhaustiva, alertas y respuesta automatizada a incidentes.
 
 5. **[Proyecto Capstone: Solución Integral de Alta Disponibilidad](proyecto-capstone.md)** - Implementar una solución completa que integre todos los conceptos anteriores.
 
-Let's begin with [Lab 1: Setting up Multi-AZ Architecture](lab1.md).
+Comencemos con el [Laboratorio 1: Configuración de Arquitectura Multi-AZ](lab1.md).

@@ -1,35 +1,35 @@
-# TechModa AWS Labs
+# Laboratorios AWS de TechModa
 
-Welcome to the TechModa AWS Labs, a comprehensive hands-on learning platform focused on implementing high availability and disaster recovery solutions in AWS.
+Bienvenido a los Laboratorios AWS de TechModa, una plataforma de aprendizaje práctico enfocada en la implementación de soluciones de alta disponibilidad y recuperación ante desastres en AWS.
 
-## About TechModa
+## Acerca de TechModa
 
-TechModa is a rapidly growing fashion e-commerce platform that connects independent designers with consumers worldwide. As a technology-driven fashion marketplace, TechModa is experiencing explosive growth and needs a robust cloud infrastructure that can:
+TechModa es una plataforma de comercio electrónico de moda en rápido crecimiento que conecta a diseñadores independientes con consumidores de todo el mundo. Como mercado de moda impulsado por la tecnología, TechModa está experimentando un crecimiento explosivo y necesita una infraestructura en la nube robusta que pueda:
 
-- Handle unpredictable traffic spikes during fashion events and promotional campaigns
-- Ensure 24/7 availability of the product catalog and ordering system
-- Protect customer data and transaction records
-- Comply with international regulations for data protection
-- Scale efficiently as the business expands to new markets
+- Manejar picos de tráfico impredecibles durante eventos de moda y campañas promocionales
+- Garantizar disponibilidad 24/7 del catálogo de productos y sistema de pedidos
+- Proteger los datos de los clientes y registros de transacciones
+- Cumplir con las regulaciones internacionales de protección de datos
+- Escalar eficientemente a medida que el negocio se expande a nuevos mercados
 
-## Learning Objectives
+## Objetivos de Aprendizaje
 
-Through these labs, you will learn how to:
+A través de estos laboratorios, aprenderás a:
 
-- Design and implement highly available architectures in AWS
-- Configure auto-scaling solutions for dynamic workloads
-- Implement effective disaster recovery strategies
-- Set up comprehensive monitoring solutions with CloudWatch
-- Create automated backup and recovery processes
-- Apply AWS best practices for resiliency and fault tolerance
+- Diseñar e implementar arquitecturas de alta disponibilidad en AWS
+- Configurar soluciones de auto-escalado para cargas de trabajo dinámicas
+- Implementar estrategias efectivas de recuperación ante desastres
+- Configurar soluciones de monitorización exhaustivas con CloudWatch
+- Crear procesos automatizados de respaldo y recuperación
+- Aplicar las mejores prácticas de AWS para resiliencia y tolerancia a fallos
 
-## Prerequisites
+## Requisitos Previos
 
-- Basic understanding of AWS services
-- AWS account with appropriate permissions
-- AWS CLI configured on your local machine
-- Basic knowledge of serverless architectures
+- Conocimiento básico de servicios AWS
+- Cuenta AWS con permisos apropiados
+- AWS CLI configurado en tu máquina local
+- Conocimiento básico de arquitecturas serverless
 
-## Getting Started
+## Comenzando
 
-Begin with the [Labs Overview](labs/index.md) to understand the structure of the learning path, or jump directly to the [High Availability and Disaster Recovery](labs/ha-dr/index.md) module to start your hands-on learning journey.
+Comienza con la [Descripción General de Laboratorios](labs/index.md) para entender la estructura del camino de aprendizaje, o ve directamente al módulo de [Alta Disponibilidad y Recuperación ante Desastres](labs/ha-dr/index.md) para iniciar tu viaje de aprendizaje práctico.

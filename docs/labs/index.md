@@ -1,30 +1,30 @@
-# Labs Overview
+# Descripción General de Laboratorios
 
-The TechModa AWS Labs are designed to provide hands-on experience with real-world scenarios that fashion e-commerce businesses face when implementing cloud solutions. Each lab focuses on specific aspects of high availability and disaster recovery in AWS.
+Los Laboratorios AWS de TechModa están diseñados para proporcionar experiencia práctica con escenarios del mundo real que las empresas de comercio electrónico de moda enfrentan al implementar soluciones en la nube. Cada laboratorio se enfoca en aspectos específicos de alta disponibilidad y recuperación ante desastres en AWS.
 
-## Available Labs
+## Laboratorios Disponibles
 
-### High Availability & Disaster Recovery Track
+### Módulo de Alta Disponibilidad y Recuperación ante Desastres
 
-This track focuses on building resilient systems that can withstand failures and recover quickly:
+Este módulo se centra en la construcción de sistemas resilientes que pueden resistir fallos y recuperarse rápidamente:
 
-1. **[Setting up Multi-AZ Architecture](ha-dr/lab1.md)** - Learn how to distribute your application across multiple Availability Zones to protect against data center failures.
+1. **[Configuración de Arquitectura Multi-AZ](ha-dr/lab1.md)** - Aprende a distribuir tu aplicación a través de múltiples Zonas de Disponibilidad para protegerla contra fallos en centros de datos.
 
-2. **[Implementing Auto Scaling](ha-dr/lab2.md)** - Configure automatic scaling of resources based on demand to maintain performance during traffic spikes.
+2. **[Implementación de Auto Escalado](ha-dr/lab2.md)** - Configura el escalado automático de recursos basado en la demanda para mantener el rendimiento durante picos de tráfico.
 
-3. **[Disaster Recovery Strategies](ha-dr/lab3.md)** - Implement backup-restore, pilot light, warm standby, and multi-site active/active DR strategies.
+3. **[Estrategias de Recuperación ante Desastres](ha-dr/lab3.md)** - Implementa estrategias de respaldo-restauración, luz piloto, espera activa y multi-sitio activo/activo para DR.
 
-4. **[Monitoring with CloudWatch](ha-dr/lab4.md)** - Set up comprehensive monitoring, alerting, and automated responses to infrastructure events.
+4. **[Monitorización con CloudWatch](ha-dr/lab4.md)** - Configura monitorización exhaustiva, alertas y respuestas automatizadas a eventos de infraestructura.
 
-5. **[Proyecto Capstone: Solución Integral de Alta Disponibilidad](ha-dr/proyecto-capstone.md)** - Implementar una solución completa que integre todos los conceptos anteriores.
+5. **[Proyecto Capstone: Solución Integral de Alta Disponibilidad](ha-dr/proyecto-capstone.md)** - Implementa una solución completa que integre todos los conceptos anteriores.
 
-## TechModa Business Context
+## Contexto Empresarial de TechModa
 
-Throughout these labs, you'll be working with TechModa's product catalog API, which is the backbone of their e-commerce platform. This API must be:
+A lo largo de estos laboratorios, trabajarás con la API del catálogo de productos de TechModa, que es la columna vertebral de su plataforma de comercio electrónico. Esta API debe ser:
 
-- **Highly Available**: The product catalog must be accessible 24/7, as any downtime directly impacts sales.
-- **Scalable**: During fashion week events and flash sales, traffic can increase by 1000%.
-- **Resilient**: The system must be able to recover quickly from any failures.
-- **Compliant**: Customer data must be protected and available according to regulatory requirements.
+- **Altamente Disponible**: El catálogo de productos debe ser accesible 24/7, ya que cualquier tiempo de inactividad afecta directamente a las ventas.
+- **Escalable**: Durante eventos de semana de la moda y ventas flash, el tráfico puede aumentar hasta un 1000%.
+- **Resiliente**: El sistema debe poder recuperarse rápidamente de cualquier fallo.
+- **Conforme**: Los datos de los clientes deben estar protegidos y disponibles según los requisitos regulatorios.
 
-By completing these labs, you'll build the skills needed to design and implement solutions that meet these critical business requirements using AWS services.
+Al completar estos laboratorios, desarrollarás las habilidades necesarias para diseñar e implementar soluciones que cumplan con estos requisitos empresariales críticos utilizando servicios de AWS.
