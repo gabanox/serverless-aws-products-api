@@ -2,12 +2,27 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Serverless API con API Gateway, Lambda y DynamoDB para gestión de productos
 
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    Description: Environment name
+
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Timeout: 10
+    MemorySize: 256
+    Environment:
+      Variables:
+        PRODUCTS_TABLE: !Ref ProductsTable
+
 Resources:
   # DynamoDB Table
   ProductsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Products
+      TableName: !Sub "${AWS::StackName}-products-${Environment}"
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: id
@@ -22,14 +37,9 @@ Resources:
   GetProductFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${AWS::StackName}-get-product-${Environment}"
       CodeUri: ./src/
       Handler: getProduct.handler
-      Runtime: nodejs16.x
-      Timeout: 10
-      MemorySize: 256
-      Environment:
-        Variables:
-          PRODUCTS_TABLE: !Ref ProductsTable
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref ProductsTable
@@ -43,14 +53,9 @@ Resources:
   GetProductsFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${AWS::StackName}-get-products-${Environment}"
       CodeUri: ./src/
       Handler: getProducts.handler
-      Runtime: nodejs16.x
-      Timeout: 10
-      MemorySize: 256
-      Environment:
-        Variables:
-          PRODUCTS_TABLE: !Ref ProductsTable
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref ProductsTable
@@ -64,14 +69,9 @@ Resources:
   CreateProductFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${AWS::StackName}-create-product-${Environment}"
       CodeUri: ./src/
       Handler: createProduct.handler
-      Runtime: nodejs16.x
-      Timeout: 10
-      MemorySize: 256
-      Environment:
-        Variables:
-          PRODUCTS_TABLE: !Ref ProductsTable
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ProductsTable
@@ -85,14 +85,9 @@ Resources:
   UpdateProductFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${AWS::StackName}-update-product-${Environment}"
       CodeUri: ./src/
       Handler: updateProduct.handler
-      Runtime: nodejs16.x
-      Timeout: 10
-      MemorySize: 256
-      Environment:
-        Variables:
-          PRODUCTS_TABLE: !Ref ProductsTable
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ProductsTable
@@ -106,14 +101,9 @@ Resources:
   DeleteProductFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${AWS::StackName}-delete-product-${Environment}"
       CodeUri: ./src/
       Handler: deleteProduct.handler
-      Runtime: nodejs16.x
-      Timeout: 10
-      MemorySize: 256
-      Environment:
-        Variables:
-          PRODUCTS_TABLE: !Ref ProductsTable
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ProductsTable
@@ -128,7 +118,15 @@ Outputs:
   ApiEndpoint:
     Description: "API Gateway endpoint URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiEndpoint"
   
   ProductsTable:
     Description: "DynamoDB Products table name"
     Value: !Ref ProductsTable
+    Export:
+      Name: !Sub "${AWS::StackName}-ProductsTable"
+
+  StackInfo:
+    Description: "Stack identifier information"
+    Value: !Sub "${AWS::StackName}-${Environment}-${AWS::Region}"
